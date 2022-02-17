@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: head"></head>
+<body class="d-flex flex-column">
+    <header th:replace="fragments/header.html :: header"></header>
+
+    <section id="cover" class="min-vh-100">
+        <div id="cover-caption" style="height:100vh; padding: 0!important;" class="container mh-100 mw-100 align-self-stretch">
+            <h1 class="h-100 justify-content-center row-fluid d-flex align-items-center" style="color: white; font-size: 70px; background-image: url(http://csc.knu.ua/media/filer_public/8b/e6/8be69866-bc52-481e-b0b6-44920fd44e12/bg-5.jpg)" >
+                <span th:text="#{welcome.message}" class="text-center p-4" style="background-color: #482491;"></span>
+            </h1>
+        </div>
+    </section>
+    <div th:replace="fragments/script.html :: script"></div>
+</body>
+</html>

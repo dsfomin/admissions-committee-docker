@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <title>Admissions</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous" />
+
+    <script type="text/javascript">
+        /* <![CDATA[ */
+        function changeFacultySortBy(pageSize, pageNo) {
+        const selectBox = document.getElementById("FacultySortBy");
+        const selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        window.location.href = ''.concat('/faculty?pageSize=' ,pageSize, '&', 'pageNo=', pageNo, '&','sortBy=', selectedValue);
+        }
+        /* ]]> */
+    </script>
+</head>

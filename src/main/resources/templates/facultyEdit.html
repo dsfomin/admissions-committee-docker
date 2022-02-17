@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: head"></head>
+<body>
+
+    <header th:replace="fragments/header.html :: header"></header>
+
+    <div class="container mt-3">
+        <form th:action="@{/faculty}" method="post">
+            <input type="text" name="name" th:value="${faculty.getName()}">
+            <input type="text" name="contractPlaces" th:value="${faculty.getContractPlaces()}">
+            <input type="text" name="budgetPlaces" th:value="${faculty.getBudgetPlaces()}">
+            <input type="hidden" name="facultyId" th:value="${faculty.getId()}">
+            <button th:type="submit" th:utext="Save"></button>
+        </form>
+    </div>
+
+    <div th:replace="fragments/script.html :: script"></div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: head"></head>
+<body>
+
+    <header th:replace="fragments/header.html :: header"></header>
+
+    <div class="container mt-3" style="position: relative">
+        <p sec:authorize="hasAuthority('ADMIN')" style="position: absolute; right: 0; top: 0;"><a th:href="@{/faculty/{id}/export/pdf(id=${faculty.id})}" class="btn btn-primary" th:text="|Export to pdf|"></a></p>
+        <h4 class="mb-3" th:text="'Faculty: ' + ${faculty.name}"></h4>
+        <p class="mb-2" th:text="'Count of budget places: ' + ${faculty.budgetPlaces}"></p>
+        <p class="mb-2" th:text="'Count of contract places: ' + ${faculty.contractPlaces}"></p>
+
+        <div sec:authorize="!hasAuthority('ADMIN') && hasAuthority('USER')" th:switch="${alreadyParticipate}">
+            <p th:case="true" th:if="${faculty.getFinalized() == false}" th:text="|You already participate|"></p>
+            <p th:case="false">
+                <button th:if="${faculty.getFinalized() == false}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#participateModal">
+                    Participate
+                </button>
+                <div class="alert alert-info" role="alert" th:if="${faculty.getFinalized() == true}" th:text="|Admissions on this faculty is already finalized|"></div>
+            </p>
+        </div>
+
+
+        <div>
+            <div sec:authorize="hasAuthority('ADMIN')" th:if="${faculty.getFinalized() == false}">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:data-bs-target="'#finalizeFacultyModal' + ${faculty.id}" th:text="Finalize"></button>
+                <div class="modal fade" th:id="'finalizeFacultyModal' + ${faculty.id}" tabindex="-1" aria-labelledby="finalizeFacultyModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="finalizeFacultyModalLabel">Are u sure u want to finalize this faculty?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" th:text="No"></button>
+                                <a class="btn btn-primary" th:href="@{/faculty/{id}/finalize(id=${faculty.id})}" th:text="Yes"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table th:if="${faculty.getFinalized() == true || #authorization.expression('hasAuthority(''ADMIN'')')}" class="table table-hover table-bordered caption-top">
+                <caption>Rating of participants</caption>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th th:text="|Average School Note|"></th>
+                        <th colspan="3" th:text="|Exam Notes: |"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:style="${faculty.getBudgetPlaces() > iterStat.index} ? 'background-color:rgba(0,128,0,0.3)' : (${faculty.getBudgetPlaces() + faculty.getContractPlaces() > iterStat.index && faculty.getBudgetPlaces() <= iterStat.index} ? 'background-color:rgba(0,85,255,0.3)' : 'inherit')"
+                        th:each="user, iterStat : ${usersTop}">
+                        <td th:text="${user.getEmail()}"></td>
+                        <td th:text="${user.getAverageSchoolNote()}"></td>
+                        <td th:if="${facultySubjects.containsKey(note.key)}" th:each="note : ${user.getNotes()}">
+                            <p th:text="${note.key} + ' - ' + ${note.value}"></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${faculty.getFinalized() == false}" class="modal fade" id="participateModal" tabindex="-1" aria-labelledby="participateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="participateModalLabel">Input your exam notes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="justify-content-center" th:action="@{/faculty/{id}/participate(id=${faculty.id})}" method="post">
+                        <div th:each="subject, stat : ${facultySubjects}">
+                            <label>
+                                <input readonly class="h6 sr-only mb-1" th:value="${subject.key}" th:name="'subject'+${stat.index + 1}">
+                            </label>
+                            <label th:if="${subject.value != null}">
+                                <input readonly class="form-control" type="number" min="0" max="200" step="0.1" th:id="'note'+${stat.index + 1}" th:name="'note'+${stat.index + 1}" th:placeholder="${subject.value}" th:value="${subject.value}">
+                            </label>
+                            <label th:if="${subject.value == null}">
+                                <input class="form-control" type="number" min="0" max="200" step="0.1" th:id="'note'+${stat.index + 1}" th:name="'note'+${stat.index + 1}" th:placeholder="'Note '+${stat.index + 1}">
+                            </label>
+                        </div>
+                        <button class="btn btn-primary mt-3" type="submit" th:text="OK"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/script.html :: script"></div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav id="header" th:fragment="header" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/" th:text="#{header.projectName}"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" th:text="#{header.forApplicants}" href="#" id="navbarDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false"> </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li sec:authorize="hasAnyAuthority('USER','ADMIN')"><a class="dropdown-item"
+                                                                               th:href="@{/faculty}"
+                                                                               th:text="#{header.facultiesList}"></a>
+                        </li>
+                        <li><a class="dropdown-item" href="#" th:text="#{header.applicantsInfo1}"></a></li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li><a class="dropdown-item" href="#" th:text="#{header.applicantsInfo2}"></a></li>
+                    </ul>
+                </li>
+                <li sec:authorize="hasAuthority('ADMIN')" class="nav-item dropdown">
+                    <a th:text="#{header.adminPanel}" class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false"> </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                        <li><a class="dropdown-item" th:href="@{/user}" th:text="#{header.usersList}"></a></li>
+                        <li><a class="dropdown-item" href="#" th:text="#{header.adminAnother1}"></a></li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li><a class="dropdown-item" href="#" th:text="#{header.adminAnother2}"></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <button class="btn me-1" onclick="window.location.replace('?lang=en')">EN</button>
+            <button class="btn me-1" onclick="window.location.replace('?lang=ru')">RU</button>
+            <div sec:authorize="!isAuthenticated()">
+                <a class="btn btn-primary" th:href="@{/login}" th:text="#{header.logIn}"></a>
+            </div>
+            <div class="me-3" sec:authorize="isAuthenticated()">
+                <a sec:authentication="name" th:href="@{/user/profile}"></a>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" th:method="post">
+                    <button class="btn btn-primary" th:type="submit" th:text="#{header.logOut}"></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

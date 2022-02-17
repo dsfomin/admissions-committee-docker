@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: head"></head>
+<body>
+    <header th:replace="fragments/header.html :: header"></header>
+
+    <div class="container mt-3">
+        Add new faculty
+        <div th:if="${message != null}" th:utext="${message}"></div>
+        <form th:action="@{/faculty/add}" method="post">
+            <div><label> Name : <input type="text" name="name"/></label></div>
+            <div><label> Count of budget places : <input type="text" name="budgetPlaces"/> </label></div>
+            <div><label> Count of contract places : <input type="text" name="contractPlaces"/></label></div>
+            <div><label>Exam Subject 1:
+                <select name="examSubject1">
+                    <option th:each="subject : ${T(com.me.admissions.entity.Subject).values()}"
+                            th:value="${subject}" th:text="${subject}"></option>
+                </select>
+            </label></div>
+            <div><label>Exam Subject 2:
+                <select name="examSubject2">
+                    <option th:each="subject : ${T(com.me.admissions.entity.Subject).values()}"
+                            th:value="${subject}" th:text="${subject}"></option>
+                </select>
+            </label></div>
+            <div><label>Exam Subject 3:
+                <select name="examSubject3">
+                    <option th:each="subject : ${T(com.me.admissions.entity.Subject).values()}"
+                            th:value="${subject}" th:text="${subject}"></option>
+                </select>
+            </label></div>
+            <button th:type="submit" th:utext="Save"></button>
+        </form>
+    </div>
+
+    <div th:replace="fragments/script.html :: script"></div>
+</body>
+</html>

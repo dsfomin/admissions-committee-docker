@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: head">
+</head>
+<body>
+<header th:replace="fragments/header.html :: header"></header>
+
+<div class="container mt-3 mb-3">
+
+    <div class="row mb-3" >
+        <div class="col-9">
+            <a sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary align-self-center" href="/faculty/add">Add new faculty</a>
+        </div>
+        <div class="col-3 float-md-end">
+            <div class="row">
+                <div class="col-3 align-self-center">
+                    <label for="FacultySortBy">Sort by</label>
+                </div>
+                <div class="col-9">
+                    <select id="FacultySortBy" class="form-select" aria-label="Default select example" th:onchange="'javascript:changeFacultySortBy(' + ${facultiesPage.size} + ', ' + ${facultiesPage.number} + ');'">
+                        <option th:selected="${sortBy=='name'} ? selected" value="name">Name</option>
+                        <option th:selected="${sortBy=='budgetPlaces'} ? selected" value="budgetPlaces">Count of budget places</option>
+                        <option th:selected="${sortBy=='contractPlaces'} ? selected" value="contractPlaces">Count of contract places</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-hover table-striped table-bordered ">
+        <thead>
+        <tr>
+            <th>Name of faculty</th>
+            <th>Count of budget places</th>
+            <th>Count of contract places</th>
+            <th>Count of applications</th>
+            <th sec:authorize="hasAuthority('ADMIN')"></th>
+            <th sec:authorize="hasAuthority('ADMIN')"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="faculty : ${facultiesPage.content}">
+            <td><a th:href="@{/faculty/{id}(id=${faculty.id})}" th:text="${faculty.name}"></a></td>
+            <td th:text="${faculty.budgetPlaces}"></td>
+            <td th:text="${faculty.contractPlaces}"></td>
+            <td th:text="${faculty.candidates.size()}"></td>
+            <td sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-primary" th:href="@{/faculty/edit/{id}(id=${faculty.id})}" th:text="Edit"></a></td>
+
+            <td sec:authorize="hasAuthority('ADMIN')">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" th:data-bs-target="'#deleteFacultyModal' + ${faculty.id}" th:text="Delete"></button>
+                <div class="modal fade" th:id="'deleteFacultyModal' + ${faculty.id}" tabindex="-1" aria-labelledby="deleteFacultyModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteFacultyModalLabel">Are u sure u want to delete this faculty?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" th:text="No"></button>
+                                <a class="btn btn-primary" th:href="@{/faculty/delete/{id}(id=${faculty.id})}" th:text="Yes"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="row">
+        <div class="col text-center">
+            <button th:disabled="${facultiesPage.number==0} ? disabled" class="btn btn-primary me-1" th:onclick="'window.location.href = \'' + @{/faculty(sortBy=${sortBy}, pageSize=${facultiesPage.size}, pageNo=0)} + '\''" th:text="First"></button>
+            <button th:disabled="${facultiesPage.number==0} ? disabled" class="btn btn-primary me-1" th:onclick="'window.location.href = \'' + @{/faculty(sortBy=${sortBy}, pageSize=${facultiesPage.size}, pageNo=${facultiesPage.number - 1})} + '\''" th:text="Prev"></button>
+            <th:block th:each="i: ${#numbers.sequence(1, facultiesPage.getTotalPages())}">
+                <button th:style="${facultiesPage.number + 1 == i ? '' : 'background-color:white; color: #0d6efd;'}" class="btn btn-primary me-1" th:onclick="'window.location.href = \'' + @{/faculty(sortBy=${sortBy}, pageSize=${facultiesPage.size}, pageNo=${i - 1})} + '\''" th:text="${i}"></button>
+            </th:block>
+            <button th:disabled="${facultiesPage.totalPages==facultiesPage.number + 1} ? disabled" class="btn btn-primary me-1" th:onclick="'window.location.href = \'' + @{/faculty(sortBy=${sortBy}, pageSize=${facultiesPage.size}, pageNo=${facultiesPage.number + 1})} + '\''" th:text="Next"></button>
+            <button th:disabled="${facultiesPage.totalPages==facultiesPage.number + 1} ? disabled" class="btn btn-primary me-1" th:onclick="'window.location.href = \'' + @{/faculty(sortBy=${sortBy}, pageSize=${facultiesPage.size}, pageNo=${facultiesPage.getTotalPages() - 1})} + '\''" th:text="Last"></button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div th:replace="fragments/script.html :: script"></div>
+</body>
+</html>

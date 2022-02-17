@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: head"></head>
+<body>
+
+<header th:replace="fragments/header.html :: header"></header>
+
+<div class="container mt-3">
+    <h3 sec:authorize="hasAuthority('ADMIN')" th:text="|HELLO ADMIN|"></h3>
+    <h3 th:text="'Profile: ' + ${user.email}"></h3>
+
+    <div th:if="${myAdminProfile == false}">
+        <h4 th:text="'Average note in school: ' + ${user.averageSchoolNote}"></h4>
+        <h4>User participates: </h4>
+        <table class="table" >
+            <thead>
+            <tr>
+                <td th:text="'Faculty name: '"></td>
+                <td th:text="'Budget places: '"></td>
+                <td th:text="'Contract places: '"></td>
+                <td th:text="'Finalized: '"></td>
+                <td colspan="3" th:text="'Notes: '"></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="reg : ${facultyRegistration}">
+                <td><a th:href="@{/faculty/{id}(id=${reg.faculty.id})}" th:text="${reg.faculty.name}"></a></td>
+                <td th:text="${reg.faculty.budgetPlaces}"></td>
+                <td th:text="${reg.faculty.contractPlaces}"></td>
+                <td th:text="${reg.faculty.finalized}"></td>
+                <td th:each="note : ${reg.subjects_notes}">
+                    <p th:text="${note.key}"></p>
+                    <p th:text="${note.value}"></p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div th:replace="fragments/script.html :: script"></div>
+</body>
+</html>

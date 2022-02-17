@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"  xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head.html :: head"></head>
+<body>
+    <header th:replace="fragments/header.html :: header"></header>
+
+    <div class="container mt-3">
+        <p sec:authorize="hasAuthority('ADMIN')"><a class="btn btn-primary" th:href="@{/user/export/pdf}" th:text="|Export to PDF|"></a></p>
+
+        <table class="table table-hover table-striped table-bordered ">
+            <thead>
+            <tr>
+                <th>Email</th>
+                <th>Roles</th>
+                <th sec:authorize="hasAuthority('ADMIN')"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td><a th:href="@{/user/profile/{id}(id=${user.id})}" th:text="${user.email}"></a></td>
+                <td>
+                    <span th:each="role, iterStat : ${user.roles}" th:text=" ${role} + (${iterStat.size > iterStat.index + 1} ? ', ' : '')"></span>
+                </td>
+                <td>
+                    <div th:switch="${user.active}">
+                        <p th:case="true"><a class="btn btn-primary" th:if="!${#sets.contains(user.roles, adminRole)}" th:href="@{/user/block/{id}(id=${user.id})}" th:text="Block"></a></p>
+                        <p th:case="false"><a class="btn btn-primary" th:if="!${#sets.contains(user.roles, adminRole)}" th:href="@{/user/unblock/{id}(id=${user.id})}" th:text="Unblock"></a></p>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:replace="fragments/script.html :: script"></div>
+</body>
+</html>
